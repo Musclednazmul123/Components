@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .viewport {
+            max-width: 100%;
+            margin: 20px 80px;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: fit-content;
+            align-items: center;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .card {
+            height: 300px;
+            width: 300px;
+            background-color: beige;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport">
+        <div class="container">
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+    </div>
+
+    <button onclick="slider(slide=0)" >previous</button>
+    <button onclick="slider(slide=1)">next</button>
+
+
+
+
+    <script>
+        const myElement = document.querySelector(".container")
+        const card__marginRight = 10;
+        let card__inView = 4;
+        
+        function getTranslateX() {
+            var style = window.getComputedStyle(myElement);
+            var matrix = new WebKitCSSMatrix(style.transform);
+            return ('translateX: ', matrix.m41);
+        }
+
+
+        function autowidth() {
+            const card__sliderView = document.querySelector(".viewport").clientWidth;
+            const card__containerWidth = document.querySelector(".container").clientWidth;
+            let card__widthSet = document.querySelector(".card").clientWidth;
+            const myElement = document.querySelector(".container")
+
+            if ( 0 < card__sliderView && card__sliderView <= 480 ) {
+                card__inView = 1;
+                card__widthSet = (card__sliderView - (card__marginRight * (card__inView - 1))) / card__inView;
+            } else if ( 480 < card__sliderView && card__sliderView <= 768) {
+                card__inView = 2;
+                card__widthSet = (card__sliderView - (card__marginRight * (card__inView - 1))) / card__inView;
+            } else if ( 768 < card__sliderView && card__sliderView <= 1080) {
+                card__inView = 3;
+                card__widthSet = (card__sliderView - (card__marginRight * (card__inView - 1))) / card__inView;
+            } else {
+                card__inView = 4;
+                card__widthSet = (card__sliderView - (card__marginRight * (card__inView - 1))) / card__inView;
+            }
+            const array = document.querySelector(".container").children
+
+            for (let i = 0; i < array.length; i++) {
+                array[i].style.width = `${card__widthSet}px`;
+                
+            }
+
+            document.querySelector(".container").style.transform = "translateX(" + 0 + "px)";
+            console.log('worked'+ card__widthSet)
+        }
+
+        autowidth()
+        window.addEventListener("resize", autowidth);
+        
+        function slider(slide) {
+            const card__sliderView = document.querySelector(".viewport").clientWidth;
+            const card__containerWidth = document.querySelector(".container").clientWidth;
+            let card__widthSet = document.querySelector(".card").clientWidth;
+            const myElement = document.querySelector(".container")
+
+            if (slide == 0) {
+                if (getTranslateX() >= -100) {
+                    console.log("previous working")
+                    document.querySelector(".container").style.transform = "translateX(" + 0 + "px)";
+
+                } else {
+
+                    document.querySelector(".container").style.transform = "translateX(" + (getTranslateX() + card__widthSet +  card__marginRight) + "px)";
+                }
+                
+            } else {
+                if ( getTranslateX() - card__widthSet <= -(card__containerWidth - card__sliderView)) {
+
+                    console.log (`stop---${getTranslateX()}`, -(card__widthSet * card__inView)+10)
+
+                } else {
+                    console.log (`cw = ${getTranslateX()}`, -(card__containerWidth - card__sliderView))
+                    document.querySelector(".container").style.transform = "translateX(" + (getTranslateX() - card__widthSet - card__marginRight) + "px)";
+                }
+            }
+            
+            
+            
+        }
+        
+
+        // window.setInterval(slider, 1000);
+    </script>
+    
+</body>
+</html>
